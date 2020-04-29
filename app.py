@@ -1,8 +1,11 @@
-from flask import Flask, render_template
-
+from flask import Flask, render_template, redirect, url_for, flash
+from forms import BookmarkForm
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = b'\xd3g)~5H\xeb\xc1\xe8\xd8\xf8\x05l\xafY\xaf'
+
 # user = "Janusz"
+
 bookmarks = [
     {
         "user": "Zbigniew",
@@ -27,12 +30,26 @@ def get_latest_bookmarks(limit):
 @app.route("/")
 @app.route("/index")  # dekorator
 def index():
-    return render_template("index.html", bookmarks=get_latest_bookmarks(2))     # ile mi sie wyswietli bookmarks
+    return render_template("index.html", bookmarks=get_latest_bookmarks(8))     # ile mi sie wyswietli bookmarks
 
 
-@app.route("/add")
+@app.route("/add", methods=['GET', 'POST'])
 def add():
-    return render_template("add.html")
+    form = BookmarkForm()
+
+    if form.validate_on_submit():
+        url = form.url.data
+        description = form.description.data
+
+        bm = {
+            "user": "Agatka",
+            "url": url,
+            "description": description
+        }
+
+        bookmarks.append(bm)
+        return redirect(url_for('index'))
+    return render_template('add.html', form=form)
 
 
 @app.errorhandler(404)
@@ -47,3 +64,6 @@ def server_not_found(e):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+# CSRF crros site request for jerry
