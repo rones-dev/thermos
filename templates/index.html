@@ -12,7 +12,17 @@ Thermos - welcome.
         <p>Theremos is a simple bokmarking site</p>
     </header>
     <section>
-        <ha>Recently Added
+        <h2>Recently Added</h2>
+        {% if bookmarks %}
+        <ul>
+            {% for bm in bookmarks %}
+            <li>{{ bm.user }} added <a href="{{ bm.url }}" target="_blank">{{ bm.description }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            No bookmarks yet.
+        {% endif %}
+
     </section>
 </article>
 
